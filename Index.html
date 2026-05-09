@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Illinois DMV Permit Practice Test</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0a1628;
+    --navy2: #112240;
+    --blue: #1a3a6b;
+    --gold: #c8a84b;
+    --gold-light: #e8c76b;
+    --white: #f5f5f0;
+    --muted: #8a9bb5;
+    --green: #1e7a4a;
+    --green-light: #27a060;
+    --red: #8b1a1a;
+    --red-light: #c0392b;
+    --yellow: #b8860b;
+    --card: #152035;
+    --border: rgba(200,168,75,0.2);
+  }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    padding-bottom: 120px;
+  }
+
+  /* Subtle grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(200,168,75,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,168,75,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  /* Header */
+  header {
+    background: linear-gradient(135deg, var(--navy2) 0%, var(--blue) 100%);
+    border-bottom: 3px solid var(--gold);
+    padding: 20px 0;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: '🚗';
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 48px;
+    opacity: 0.15;
+  }
+  .header-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+  .header-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--navy);
+    font-family: 'Oswald', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 8px;
+  }
+  header h1 {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(22px, 5vw, 36px);
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--white);
+    line-height: 1.1;
+  }
+  header h1 span { color: var(--gold); }
+  header p {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  /* Start screen */
+  #startScreen {
+    text-align: center;
+    padding: 20px 0;
+    animation: fadeUp 0.4s ease;
+  }
+  .start-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px 32px;
+    margin-bottom: 24px;
+  }
+  .start-card h2 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .rules {
+    text-align: left;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+  }
+  .rules li {
+    list-style: none;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 15px;
+    color: var(--white);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .rules li:last-child { border-bottom: none; }
+  .rules li::before {
+    content: '▸';
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .btn-start {
+    width: 100%;
+    padding: 16px;
+    background: var(--gold);
+    color: var(--navy);
+    font-family: 'Oswald', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-start:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(200,168,75,0.3);
+  }
+
+  /* Quiz screen */
+  #quizScreen { display: none; animation: fadeUp 0.3s ease; }
+
+  /* Progress */
+  .progress-bar-wrap {
+    background: rgba(255,255,255,0.08);
+    border-radius: 4px;
+    height: 6px;
+    margin-bottom: 6px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  /* Question card */
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    animation: fadeUp 0.3s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .q-num {
+    font-family: 'Oswald', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .q-tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: rgba(200,168,75,0.12);
+    color: var(--gold);
+    padding: 3px 10px;
+    border-radius: 3px;
+  }
+  .q-text {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--white);
+    margin-bottom: 24px;
+  }
+
+  /* Options */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 13px 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 15px;
+    font-family: 'Source Sans 3', sans-serif;
+    color: var(--white);
+    text-align: left;
+    width: 100%;
+  }
+  .option-btn:hover:not(:disabled) {
+    background: rgba(200,168,75,0.08);
+    border-color: rgba(200,168,75,0.35);
+    transform: translateX(4px);
+  }
+  .option-letter {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid rgba(255,255,255,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold);
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .option-btn.correct { background: rgba(30,122,74,0.2); border-color: var(--green-light); }
+  .option-btn.correct .option-letter { background: var(--green-light); border-color: var(--green-light); color: #fff; }
+  .option-btn.wrong { background: rgba(192,57,43,0.2); border-color: var(--red-light); }
+  .option-btn.wrong .option-letter { background: var(--red-light); border-color: var(--red-light); color: #fff; }
+  .option-btn.reveal { background: rgba(30,122,74,0.1); border-color: rgba(39,160,96,0.4); }
+  .option-btn:disabled { cursor: default; transform: none !important; }
+
+  /* Feedback */
+  .feedback {
+    margin-top: 14px;
+    padding: 13px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.55;
+    display: none;
+  }
+  .feedback.show { display: block; animation: fadeUp 0.2s ease; }
+  .feedback.correct-fb { background: rgba(30,122,74,0.15); border: 1px solid rgba(39,160,96,0.3); color: #7ecfa5; }
+  .feedback.wrong-fb { background: rgba(192,57,43,0.12); border: 1px solid rgba(192,57,43,0.3); color: #f0a59d; }
+  .feedback strong { display: block; font-size: 15px; margin-bottom: 3px; }
+
+  /* Action buttons */
+  .action-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .btn-skip {
+    flex: 1;
+    padding: 13px;
+    background: transparent;
+    border: 1.5px solid rgba(200,168,75,0.3);
+    border-radius: 8px;
+    color: var(--gold);
+    font-family: 'Oswald', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-skip:hover { background: rgba(200,168,75,0.08); border-color: var(--gold); }
+  .btn-next {
+    flex: 2;
+    padding: 13px;
+    background: var(--gold);
+    border: none;
+    border-radius: 8px;
+    color: var(--navy);
+    font-family: 'Oswald', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: none;
+  }
+  .btn-next:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .btn-next.show { display: block; }
+
+  /* Skipped banner */
+  .skipped-banner {
+    background: rgba(184,134,11,0.12);
+    border: 1px solid rgba(200,168,75,0.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: none;
+    text-align: center;
+  }
+  .skipped-banner.show { display: block; }
+
+  /* Bottom counter — fixed */
+  #scoreBar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--navy2);
+    border-top: 2px solid var(--gold);
+    padding: 12px 16px;
+    z-index: 100;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+  }
+  .score-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 8px;
+  }
+  .score-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    flex: 1;
+  }
+  .score-num {
+    font-family: 'Oswald', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    transition: all 0.2s;
+  }
+  .score-num.correct-num { color: #27a060; }
+  .score-num.wrong-num { color: #e74c3c; }
+  .score-num.skip-num { color: var(--gold); }
+  .score-num.remain-num { color: var(--muted); }
+  .score-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .score-divider {
+    width: 1px;
+    height: 36px;
+    background: rgba(255,255,255,0.08);
+  }
+
+  /* Results screen */
+  #resultsScreen { display: none; animation: fadeUp 0.4s ease; }
+  .results-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 36px 28px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .result-label { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .big-score {
+    font-family: 'Oswald', sans-serif;
+    font-size: 80px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .pass-pill {
+    display: inline-block;
+    font-family: 'Oswald', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 7px 24px;
+    border-radius: 4px;
+    margin: 14px 0 18px;
+  }
+  .pass-pill.pass { background: rgba(30,122,74,0.2); color: #27a060; border: 1px solid #1e7a4a; }
+  .pass-pill.fail { background: rgba(192,57,43,0.2); color: #e74c3c; border: 1px solid #8b1a1a; }
+  .result-msg { font-size: 15px; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .stat-box {
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 14px 8px;
+  }
+  .stat-box .sn {
+    font-family: 'Oswald', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+  }
+  .stat-box .sl { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+  .stat-box.s-correct .sn { color: #27a060; }
+  .stat-box.s-wrong .sn { color: #e74c3c; }
+  .stat-box.s-skip .sn { color: var(--gold); }
+  .btn-restart {
+    width: 100%;
+    padding: 15px;
+    background: var(--gold);
+    color: var(--navy);
+    font-family: 'Oswald', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-restart:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+  /* Review list */
+  .review-section { margin-top: 24px; text-align: left; }
+  .review-section h3 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .review-item {
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    border-left: 3px solid;
+    font-size: 13px;
+  }
+  .review-item.r-wrong { border-color: #e74c3c; }
+  .review-item.r-skip { border-color: var(--gold); }
+  .review-item .rq { font-weight: 500; color: var(--white); margin-bottom: 4px; }
+  .review-item .ra { color: var(--muted); font-size: 12px; }
+  .review-item .ra-correct { color: #7ecfa5; }
+
+  @media (max-width: 480px) {
+    .question-card { padding: 20px 16px; }
+    .q-text { font-size: 15px; }
+    .option-btn { font-size: 14px; padding: 11px 13px; }
+    .big-score { font-size: 60px; }
+    .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-badge">Illinois Driver Education</div>
+    <h1>DMV Permit <span>Practice Test</span></h1>
+    <p>Based on the official Illinois Rules of the Road</p>
+  </div>
+</header>
+
+<!-- START SCREEN -->
+<div class="wrap">
+<div id="startScreen">
+  <div class="start-card">
+    <h2>Ready to Test Your Knowledge?</h2>
+    <ul class="rules">
+      <li>40 questions randomly selected from an 86-question bank</li>
+      <li>You need 32 correct answers (80%) to pass</li>
+      <li>Answer one question at a time</li>
+      <li>Skip any question to return to it at the end</li>
+      <li>Your score updates live at the bottom of the screen</li>
+      <li>Review missed and skipped questions at the end</li>
+    </ul>
+    <button class="btn-start" onclick="startQuiz()">Begin Practice Test</button>
+  </div>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div id="quizScreen">
+  <div class="skipped-banner" id="skippedBanner">
+    ⚠️ You're now answering your <span id="skippedCount">0</span> skipped question(s).
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill" style="width: 2.5%"></div>
+  </div>
+  <div class="progress-meta">
+    <span id="progressLabel">Question 1 of 40</span>
+    <span id="progressPct">0% complete</span>
+  </div>
+  <div class="question-card" id="questionCard">
+    <div class="q-meta">
+      <div class="q-num" id="qNum">Question 1</div>
+      <div class="q-tag" id="qTag">Traffic Laws</div>
+    </div>
+    <div class="q-text" id="qText"></div>
+    <div class="options" id="optionsWrap"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="action-row">
+      <button class="btn-skip" id="btnSkip" onclick="skipQuestion()">Skip ↷</button>
+      <button class="btn-next show" id="btnNext" onclick="nextQuestion()" style="display:none;">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS SCREEN -->
+<div id="resultsScreen">
+  <div class="results-card">
+    <div class="result-label">Your Final Score</div>
+    <div class="big-score" id="bigScore"></div>
+    <div class="result-label">out of 40 questions</div>
+    <div class="pass-pill" id="passPill"></div>
+    <p class="result-msg" id="resultMsg"></p>
+    <div class="stats-grid">
+      <div class="stat-box s-correct"><div class="sn" id="r-correct">0</div><div class="sl">Correct</div></div>
+      <div class="stat-box s-wrong"><div class="sn" id="r-wrong">0</div><div class="sl">Incorrect</div></div>
+      <div class="stat-box s-skip"><div class="sn" id="r-skip">0</div><div class="sl">Skipped</div></div>
+    </div>
+    <button class="btn-restart" onclick="restartQuiz()">🔄 Take Another Test</button>
+    <div class="review-section" id="reviewSection"></div>
+  </div>
+</div>
+</div><!-- end wrap -->
+
+<!-- SCORE BAR -->
+<div id="scoreBar">
+  <div class="score-inner">
+    <div class="score-item">
+      <div class="score-num correct-num" id="sc-correct">0</div>
+      <div class="score-label">Correct</div>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-item">
+      <div class="score-num wrong-num" id="sc-wrong">0</div>
+      <div class="score-label">Incorrect</div>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-item">
+      <div class="score-num skip-num" id="sc-skip">0</div>
+      <div class="score-label">Skipped</div>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-item">
+      <div class="score-num remain-num" id="sc-remain">40</div>
+      <div class="score-label">Remaining</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  // --- GRADUATED LICENSING & TEEN DRIVERS ---
+  { cat: "Teen Drivers", q: "During the initial licensing phase, a teen driver is allowed only one passenger under age 20 in the vehicle during the first 12 months of licensing.", opts: ["True", "False"], ans: 1 },
+  { cat: "Teen Drivers", q: "To obtain court supervision for a traffic violation, a minor must appear in court with a parent/legal guardian and attend a traffic safety school.", opts: ["True", "False"], ans: 0 },
+  { cat: "Teen Drivers", q: "A parent or legal guardian may request that the driver's license of a minor be cancelled at any time before age 18.", opts: ["True", "False"], ans: 0 },
+  { cat: "Teen Drivers", q: "Illinois drivers under age 16 are required to have at least 50 hours of behind-the-wheel supervised driving before obtaining their driver's license.", opts: ["True", "False"], ans: 0 },
+  { cat: "Teen Drivers", q: "Drivers under age 20 are prohibited from using their cell phone while driving except in the case of an emergency.", opts: ["True", "False"], ans: 1 },
+  { cat: "Teen Drivers", q: "Drivers under age 18 must hold their instruction permit for nine consecutive months before obtaining their driver's license.", opts: ["True", "False"], ans: 0 },
+  // --- PASSING & LANE USE ---
+  { cat: "Passing & Lanes", q: "When passing another vehicle, a driver should wait until the entire car just passed is visible in the rearview mirror before turning back into the right-hand lane.", opts: ["True", "False"], ans: 0 },
+  { cat: "Passing & Lanes", q: "After making a proper stop and yielding to traffic or pedestrians, it is permissible for drivers on a one-way street to turn left at a red light onto another one-way street that moves traffic to the left.", opts: ["True", "False"], ans: 0 },
+  { cat: "Passing & Lanes", q: "How should a driver proceed if within an intersection waiting to make a left turn when the traffic signal turns red?", opts: ["Wait in the intersection until the light turns green", "Yield to oncoming traffic and complete the turn", "Back up from the intersection when clear"], ans: 1 },
+  { cat: "Passing & Lanes", q: "A driver may pass another vehicle by driving on the shoulder of the road.", opts: ["True", "False"], ans: 1 },
+  { cat: "Passing & Lanes", q: "A driver must give the right or left turn signal when changing lanes.", opts: ["True", "False"], ans: 0 },
+  { cat: "Passing & Lanes", q: "It is permissible to pass on a two-lane, two-way roadway within 100 feet of an intersection or railroad crossing.", opts: ["True", "False"], ans: 1 },
+  { cat: "Passing & Lanes", q: "Drivers may pass on a two-lane roadway marked with a single solid yellow line on their side of the center line.", opts: ["True", "False"], ans: 1 },
+  { cat: "Passing & Lanes", q: "Slow vehicles should use the left-hand lane except when passing or turning left.", opts: ["True", "False"], ans: 1 },
+  // --- TRAFFIC LAWS & INTERSECTIONS ---
+  { cat: "Traffic Laws", q: "It is permissible to make a right turn against a red signal light after stopping and yielding to other vehicles and pedestrians.", opts: ["True", "False"], ans: 0 },
+  { cat: "Traffic Laws", q: "In urban areas, drivers moving out of an alley, building, private road, or driveway need not come to a complete stop before entering the roadway if the roadway is clear of traffic.", opts: ["True", "False"], ans: 1 },
+  { cat: "Traffic Laws", q: "For what distance should a continuous turn signal be given when making a left or right turn in a business or residential district?", opts: ["Not less than 50 feet", "Not less than 75 feet", "Not less than 100 feet"], ans: 2 },
+  { cat: "Traffic Laws", q: "A driver may proceed immediately when waiting at an intersection and the traffic signal light turns green.", opts: ["True", "False"], ans: 1 },
+  { cat: "Traffic Laws", q: "What should drivers do when approaching a construction area?", opts: ["Increase their speed to get out of the way quickly", "Slow down, stop all wireless telephone communications, and yield the right of way", "Honk their horn several times to alert workers"], ans: 1 },
+  { cat: "Traffic Laws", q: "Drivers must yield to pedestrians in an unmarked crosswalk.", opts: ["True", "False"], ans: 0 },
+  { cat: "Traffic Laws", q: "It is legal for anyone to talk on the phone if using a hands-free device while driving, unless under age 19.", opts: ["True", "False"], ans: 0 },
+  { cat: "Traffic Laws", q: "Speed should be reduced below the posted speed limit for which of the following reasons?", opts: ["Driver is driving in unfavorable weather conditions", "Driver is approaching and crossing an intersection", "Both of the above"], ans: 2 },
+  { cat: "Traffic Laws", q: "When must a driver slow down for a school zone?", opts: ["On school days between 6:30 a.m. and 4:00 p.m., when children are present and signs are posted", "On weekends", "Only during recess"], ans: 0 },
+  { cat: "Traffic Laws", q: "Drivers may open car doors on the side where traffic is moving only when it can be done safely and without interfering with traffic.", opts: ["True", "False"], ans: 0 },
+  { cat: "Traffic Laws", q: "Unless authorized to do so, drivers may not break into the line of a funeral procession.", opts: ["True", "False"], ans: 0 },
+  { cat: "Traffic Laws", q: "After being pulled over by law enforcement, a driver should immediately exit the vehicle and quickly approach the officer's squad car.", opts: ["True", "False"], ans: 1 },
+  { cat: "Traffic Laws", q: "If drivers need to obtain insurance or vehicle registration information from the glove box, they should inform the police officer before doing so.", opts: ["True", "False"], ans: 0 },
+  { cat: "Traffic Laws", q: "Drivers are allowed to leave the roadway to avoid a traffic signal.", opts: ["True", "False"], ans: 1 },
+  // --- RAILROAD CROSSINGS ---
+  { cat: "Railroad Crossings", q: "All vehicles are required to stop between 15 and 50 feet of the nearest rail of a railroad crossing when a train is approaching.", opts: ["True", "False"], ans: 0 },
+  { cat: "Railroad Crossings", q: "When approaching a railroad crossing that has no warning signals such as electric flashing lights or gates, a driver should look, listen, and slow down.", opts: ["True", "False"], ans: 0 },
+  { cat: "Railroad Crossings", q: "If moving with a stream of vehicles across a railroad track, it is safe to stop on the track for a short period of time.", opts: ["True", "False"], ans: 1 },
+  { cat: "Railroad Crossings", q: "After a train clears a crossing with flashing signals, drivers may proceed after checking for a second train and confirming the lights have stopped flashing.", opts: ["True", "False"], ans: 0 },
+  { cat: "Railroad Crossings", q: "A railroad crossbuck sign should be treated the same as a yield sign.", opts: ["True", "False"], ans: 0 },
+  { cat: "Railroad Crossings", q: "When approaching a railroad crossing sign, a driver should slow down, look, and stop if necessary.", opts: ["True", "False"], ans: 0 },
+  // --- SHARING THE ROAD ---
+  { cat: "Sharing the Road", q: "When motorists are turning right and a bicyclist is approaching on the right, they should let the bicyclist go through the intersection first before making a right turn.", opts: ["True", "False"], ans: 0 },
+  { cat: "Sharing the Road", q: "A driver does not need to allow as much distance when following a motorcycle as when following a car.", opts: ["True", "False"], ans: 1 },
+  { cat: "Sharing the Road", q: "Motorcyclists are entitled to use the full width of a traffic lane, and a driver should pass a motorcycle the same way they would pass another vehicle.", opts: ["True", "False"], ans: 0 },
+  { cat: "Sharing the Road", q: "When following a truck at night, it is important for drivers to dim their vehicle's headlights.", opts: ["True", "False"], ans: 0 },
+  { cat: "Sharing the Road", q: "When approaching a disabled pedestrian using a guide dog, white cane, or other assistive device, a driver should yield the right of way.", opts: ["True", "False"], ans: 0 },
+  { cat: "Sharing the Road", q: "When opening your driver's side door on a road with oncoming vehicle and bicycle traffic, you should:", opts: ["Open the door by reaching across with your right hand for a better view of approaching traffic", "Open the door only when it does not interfere with vehicle and bicycle traffic approaching from behind", "Open the door with your left hand and then check for oncoming traffic", "Both A and B"], ans: 3 },
+  // --- SCHOOL BUS ---
+  { cat: "School Bus", q: "When on a two-lane roadway, drivers must stop their vehicles when approaching a stopped school bus with its red warning lights flashing and its stop signal arm extended.", opts: ["True", "False"], ans: 0 },
+  { cat: "School Bus", q: "What is the penalty for being convicted of illegally passing a stopped school bus?", opts: ["A suspension of driving privileges", "A suspension of the vehicle registration", "A $30 fine"], ans: 0 },
+  // --- EMERGENCY VEHICLES ---
+  { cat: "Emergency Vehicles", q: "When an authorized emergency vehicle using its sirens and flashing lights approaches, the driver should pull to the right-hand edge of the roadway and wait for the emergency vehicle to pass.", opts: ["True", "False"], ans: 0 },
+  // --- DUI & ALCOHOL ---
+  { cat: "DUI & Alcohol", q: "If arrested with a blood alcohol concentration of 0.08% or more, an individual's driving privileges will be suspended for at least 6 months.", opts: ["True", "False"], ans: 0 },
+  { cat: "DUI & Alcohol", q: "Alcohol is the single greatest factor in fatal motor vehicle crashes.", opts: ["True", "False"], ans: 0 },
+  { cat: "DUI & Alcohol", q: "A driver may be charged with aggravated DUI if they:", opts: ["Are involved in a DUI crash resulting in death or personal injury", "Commit a DUI while driving a school bus", "Receive a DUI after a previous history of reckless homicide", "All of the above"], ans: 3 },
+  { cat: "DUI & Alcohol", q: "If a driver is arrested and refuses to submit to chemical testing, driving privileges will be suspended for 3 months.", opts: ["True", "False"], ans: 1 },
+  { cat: "DUI & Alcohol", q: "Drivers whose licenses have been revoked as a result of DUI must complete an evaluation for alcohol and drug problems and pay a reinstatement fee to regain their license.", opts: ["True", "False"], ans: 0 },
+  { cat: "DUI & Alcohol", q: "It is illegal for persons under age 21 to drive with any trace of alcohol or drugs in their systems.", opts: ["True", "False"], ans: 0 },
+  // --- CRASHES & FINANCIAL RESPONSIBILITY ---
+  { cat: "Crashes & Insurance", q: "A crash report must be filed by the driver if the crash involves death, bodily injury, or property damage of more than $1,500 (or more than $500 if a vehicle is uninsured).", opts: ["True", "False"], ans: 0 },
+  { cat: "Crashes & Insurance", q: "Before drivers can regain driving privileges after losing them for failure to pay for crash damages, they must file proof of financial responsibility with the Secretary of State's office.", opts: ["True", "False"], ans: 0 },
+  { cat: "Crashes & Insurance", q: "Drivers who are involved in or come upon a traffic crash should stop their vehicle in a safe, well-lit public place that does not obstruct traffic if able to do so.", opts: ["True", "False"], ans: 0 },
+  { cat: "Crashes & Insurance", q: "A driver has 30 minutes to report a crash after it occurs.", opts: ["True", "False"], ans: 0 },
+  { cat: "Crashes & Insurance", q: "Drivers convicted of a mandatory insurance violation will:", opts: ["Lose their driving privileges for 3 months", "Lose their driving privileges for 6 months", "Lose their driving privileges for one year"], ans: 0 },
+  { cat: "Crashes & Insurance", q: "Drivers are required to file proof of financial responsibility if:", opts: ["They receive an unsatisfied court judgment related to a crash", "Their license was suspended due to an uninsured crash", "They have been convicted of three or more insurance violations", "All of the above"], ans: 3 },
+  // --- LICENSE SUSPENSION & REVOCATION ---
+  { cat: "License Actions", q: "An individual's driving privileges may be suspended for illegally transporting alcohol twice in 12 months by a person over age 21.", opts: ["True", "False"], ans: 0 },
+  { cat: "License Actions", q: "Driving privileges may be revoked for giving the Secretary of State false information.", opts: ["True", "False"], ans: 0 },
+  { cat: "License Actions", q: "A driver's license may be cancelled if a driver is found medically or visually unfit to safely operate a vehicle.", opts: ["True", "False"], ans: 0 },
+  { cat: "License Actions", q: "Restricted driving permits can be issued to any suspended or revoked driver.", opts: ["True", "False"], ans: 1 },
+  { cat: "License Actions", q: "A driver's license may be suspended for failure to obey a railroad crossing signal, possessing a fraudulent driver's license, or failure to stop for a school bus.", opts: ["True", "False"], ans: 0 },
+  { cat: "License Actions", q: "A driver's license may be revoked for leaving the scene of a crash that injured or killed someone, giving false information to the Secretary of State, or reckless behavior that leads to injury or death.", opts: ["True", "False"], ans: 0 },
+  // --- TRAFFIC SIGNS & SIGNALS ---
+  { cat: "Signs & Signals", q: "A merge sign means drivers should be prepared to change lanes or allow other traffic to come into their lane.", opts: ["True", "False"], ans: 0 },
+  { cat: "Signs & Signals", q: "When approaching a stop sign that is not marked by a crosswalk, drivers should stop their vehicles before entering the intersection.", opts: ["True", "False"], ans: 0 },
+  { cat: "Signs & Signals", q: "An orange sign means drivers should be alert, adjust their speed, and be prepared to stop if necessary.", opts: ["True", "False"], ans: 0 },
+  { cat: "Signs & Signals", q: "A driver approaching a vehicle with a slow-moving vehicle sign should slow down and only pass when safe and legal to do so.", opts: ["True", "False"], ans: 0 },
+  { cat: "Signs & Signals", q: "A diamond-shaped sign warns drivers of possible hazards.", opts: ["True", "False"], ans: 0 },
+  { cat: "Signs & Signals", q: "What should a driver do when approaching a traffic control signal that is not in operation?", opts: ["Come to a full stop and yield the right of way before entering the intersection", "If the intersection is clear, the driver does not need to stop", "Drive quickly through the intersection to get out of the way"], ans: 0 },
+  { cat: "Signs & Signals", q: "If a traffic light shows both a red light and a green arrow, a driver may not turn in the direction of the arrow until the red light has changed.", opts: ["True", "False"], ans: 1 },
+  { cat: "Signs & Signals", q: "A driver approaching a flashing red light must stop, yield the right of way to traffic, and proceed when safe.", opts: ["True", "False"], ans: 0 },
+  // --- WEATHER & HAZARDOUS CONDITIONS ---
+  { cat: "Hazardous Conditions", q: "The road surface of a bridge may be dangerous in winter because it may remain icy after the rest of the roadway is clear.", opts: ["True", "False"], ans: 0 },
+  { cat: "Hazardous Conditions", q: "If driving in fog, a driver should turn on the high-beam headlights to increase the field of vision.", opts: ["True", "False"], ans: 1 },
+  { cat: "Hazardous Conditions", q: "Most rear-end crashes are caused by the vehicle in back following too closely.", opts: ["True", "False"], ans: 0 },
+  { cat: "Hazardous Conditions", q: "The 3-second rule helps the driver determine a safe following distance.", opts: ["True", "False"], ans: 0 },
+  { cat: "Hazardous Conditions", q: "If a vehicle starts to hydroplane, the driver should quickly apply the brakes.", opts: ["True", "False"], ans: 1 },
+  { cat: "Hazardous Conditions", q: "If the front right wheel of a vehicle runs off the pavement, a driver should ease off the accelerator, brake gently, and gently steer back onto the pavement.", opts: ["True", "False"], ans: 0 },
+  { cat: "Hazardous Conditions", q: "Drivers who become stranded in blizzard conditions should remain in their vehicles.", opts: ["True", "False"], ans: 0 },
+  { cat: "Hazardous Conditions", q: "When experiencing a tire blowout, the driver should apply the brakes quickly and pull off the roadway to check the tire.", opts: ["True", "False"], ans: 1 },
+  { cat: "Hazardous Conditions", q: "If a vehicle starts to skid, the driver should ease off the gas or brakes and steer in the opposite direction of the skid.", opts: ["True", "False"], ans: 1 },
+  // --- VEHICLE EQUIPMENT ---
+  { cat: "Vehicle Equipment", q: "Illinois law requires that headlights be on when atmospheric conditions require the use of windshield wipers.", opts: ["True", "False"], ans: 0 },
+  { cat: "Vehicle Equipment", q: "A driver is required to dim headlights within 500 feet before meeting another vehicle.", opts: ["True", "False"], ans: 0 },
+  { cat: "Vehicle Equipment", q: "Headlights must be lighted from sunset to sunrise.", opts: ["True", "False"], ans: 0 },
+  { cat: "Vehicle Equipment", q: "A car must have a horn that can be heard from a distance of 200 feet.", opts: ["True", "False"], ans: 0 },
+  { cat: "Vehicle Equipment", q: "Tinted windows are not allowed on the front windshield of a vehicle.", opts: ["True", "False"], ans: 0 },
+  { cat: "Vehicle Equipment", q: "TVs and video recording monitors that can be seen from the driver's seat are permitted when the vehicle is in motion.", opts: ["True", "False"], ans: 1 },
+  { cat: "Vehicle Equipment", q: "Turn signals must be visible for 300 feet.", opts: ["True", "False"], ans: 0 },
+];
+
+// ---- State ----
+let sessionQuestions = [];
+let current = 0;
+let correct = 0;
+let wrong = 0;
+let skippedIndices = [];
+let userLog = [];
+let inSkippedRound = false;
+let skippedQueue = [];
+let answered = 0;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  sessionQuestions = shuffle(QUESTIONS).slice(0, 40);
+  current = 0; correct = 0; wrong = 0; answered = 0;
+  skippedIndices = []; userLog = [];
+  inSkippedRound = false; skippedQueue = [];
+
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('resultsScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'block';
+  document.getElementById('skippedBanner').classList.remove('show');
+  updateScoreBar();
+  loadQuestion();
+}
+
+function loadQuestion() {
+  let q, qIndex;
+  if (inSkippedRound) {
+    if (skippedQueue.length === 0) { showResults(); return; }
+    qIndex = skippedQueue[0];
+    q = sessionQuestions[qIndex];
+    document.getElementById('skippedBanner').classList.add('show');
+    document.getElementById('skippedCount').textContent = skippedQueue.length;
+    document.getElementById('btnSkip').style.display = 'none';
+  } else {
+    if (current >= 40) {
+      if (skippedIndices.length > 0) {
+        inSkippedRound = true;
+        skippedQueue = [...skippedIndices];
+        loadQuestion();
+      } else {
+        showResults();
+      }
+      return;
+    }
+    if (skippedIndices.includes(current)) { current++; loadQuestion(); return; }
+    qIndex = current;
+    q = sessionQuestions[qIndex];
+    document.getElementById('btnSkip').style.display = '';
+  }
+
+  // Animate card
+  const card = document.getElementById('questionCard');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = '';
+
+  const displayNum = answered + 1;
+  document.getElementById('qNum').textContent = `Question ${displayNum}`;
+  document.getElementById('qTag').textContent = q.cat;
+  document.getElementById('qText').textContent = q.q;
+
+  const pct = Math.round((answered / 40) * 100);
+  document.getElementById('progressFill').style.width = Math.max(pct, 2.5) + '%';
+  document.getElementById('progressLabel').textContent = `Question ${displayNum} of 40`;
+  document.getElementById('progressPct').textContent = pct + '% complete';
+
+  const wrap = document.getElementById('optionsWrap');
+  wrap.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i, qIndex);
+    wrap.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').innerHTML = '';
+  document.getElementById('btnNext').style.display = 'none';
+}
+
+function selectAnswer(chosen, qIndex) {
+  const q = sessionQuestions[qIndex];
+  const buttons = document.querySelectorAll('.option-btn');
+  buttons.forEach(b => b.disabled = true);
+
+  const isCorrect = chosen === q.ans;
+  if (isCorrect) { correct++; }
+  else { wrong++; }
+  answered++;
+
+  userLog.push({ q: q.q, chosen, correctAns: q.ans, opts: q.opts, isCorrect, cat: q.cat });
+
+  buttons[chosen].classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) buttons[q.ans].classList.add('reveal');
+
+  const fb = document.getElementById('feedback');
+  const letters = ['A', 'B', 'C', 'D'];
+  if (isCorrect) {
+    fb.innerHTML = `<strong>✅ Correct!</strong>`;
+    fb.className = 'feedback show correct-fb';
+  } else {
+    fb.innerHTML = `<strong>❌ Incorrect.</strong> The correct answer is <strong>${letters[q.ans]}. ${q.opts[q.ans]}</strong>.`;
+    fb.className = 'feedback show wrong-fb';
+  }
+
+  document.getElementById('btnNext').style.display = 'block';
+  updateScoreBar();
+
+  if (inSkippedRound) skippedQueue.shift();
+  else current++;
+}
+
+function skipQuestion() {
+  skippedIndices.push(current);
+  current++;
+  updateScoreBar();
+  loadQuestion();
+}
+
+function nextQuestion() {
+  loadQuestion();
+}
+
+function updateScoreBar() {
+  document.getElementById('sc-correct').textContent = correct;
+  document.getElementById('sc-wrong').textContent = wrong;
+  document.getElementById('sc-skip').textContent = skippedIndices.length;
+  document.getElementById('sc-remain').textContent = Math.max(40 - answered - skippedIndices.length, 0);
+}
+
+function showResults() {
+  document.getElementById('quizScreen').style.display = 'none';
+  const rs = document.getElementById('resultsScreen');
+  rs.style.display = 'block';
+
+  const skippedFinal = 40 - correct - wrong;
+  const pct = Math.round((correct / 40) * 100);
+  const passed = correct >= 32;
+
+  document.getElementById('bigScore').textContent = correct;
+  document.getElementById('bigScore').style.color = passed ? '#27a060' : '#e74c3c';
+  document.getElementById('r-correct').textContent = correct;
+  document.getElementById('r-wrong').textContent = wrong;
+  document.getElementById('r-skip').textContent = skippedFinal;
+
+  const pill = document.getElementById('passPill');
+  pill.textContent = passed ? '🎉 PASSED!' : '⚠️ NOT PASSING';
+  pill.className = 'pass-pill ' + (passed ? 'pass' : 'fail');
+
+  document.getElementById('resultMsg').textContent = passed
+    ? `Great work! You scored ${pct}% — above the 80% passing threshold. You're ready to take the real test!`
+    : `You scored ${pct}%. You need at least 32 out of 40 correct (80%) to pass. Review the questions below and try again.`;
+
+  // Review missed/skipped
+  const section = document.getElementById('reviewSection');
+  const missed = userLog.filter(l => !l.isCorrect);
+  const letters = ['A', 'B', 'C', 'D'];
+
+  if (missed.length > 0) {
+    let html = `<h3>❌ Missed Questions (${missed.length})</h3>`;
+    missed.forEach(l => {
+      html += `<div class="review-item r-wrong">
+        <div class="rq">${l.q}</div>
+        <div class="ra">Your answer: ${letters[l.chosen]}. ${l.opts[l.chosen]}</div>
+        <div class="ra ra-correct">Correct: ${letters[l.correctAns]}. ${l.opts[l.correctAns]}</div>
+      </div>`;
+    });
+    section.innerHTML = html;
+  } else {
+    section.innerHTML = '';
+  }
+}
+
+function restartQuiz() {
+  document.getElementById('resultsScreen').style.display = 'none';
+  startQuiz();
+}
+</script>
+</body>
+</html>
